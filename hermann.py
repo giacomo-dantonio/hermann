@@ -1,5 +1,5 @@
 """
-This is the main module of Hermann's control coder
+This is the main module of Hermann's control code
 """
 
 import time
