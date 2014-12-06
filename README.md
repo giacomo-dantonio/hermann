@@ -30,6 +30,12 @@ Hermann has the following controls:
   audio output of the pi. Its audio output is connected directly to the old
   speaker of the Säntis.
 
+The following libraries are required:
+
+- RPi.GPIO
+- spidev
+- pyalsaaudio
+
 To run the code, just run the module hermann.py. The code should be run as root.
 For example:
 
