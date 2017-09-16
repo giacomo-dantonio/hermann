@@ -25,9 +25,9 @@ class Options(object):  # FIXME: read from filesystem
         # the handle on the left side
         self.playlists_1 = [
             "ndrkultur",  # NDR Kultur
-            "funkhaus-europa",  # Funkhaus Europa
-            "dkultur",  # Deutschlandradio Kultur
-            "nordwestradio",  # Nordwestradio
+            "bremenzwei",  Ã# Bremen 2
+            "dkultur",  # Deutschlandfunk Kultur
+            "cosmo",  # Cosmo
             "bremenvier",  # Bremen 4
             "bremeneins",  # Bremen 1
         ]

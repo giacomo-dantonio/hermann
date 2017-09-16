@@ -15,7 +15,7 @@ from RPi import GPIO
 from options import options
 
 # This is the actual range of the tuner potentiometer
-TUNER_RANGE = [10, 50]
+TUNER_RANGE = [0, 800]
 
 # This is is the tolerance of the tuner potentiometer
 TUNER_TOLERANCE = 1
@@ -79,7 +79,7 @@ class TunerControl(utils.Service):
         self.playlist_index = 0
         self.playlist = None
         self.tuner = utils.Potentiometer(channel=options.tuner_mcp_channel,
-                                         coefficient=0.1)
+                                         coefficient=0.7)
 
     def setup(self):
         """ Set up the service. Also start playing a radio station.
@@ -110,7 +110,7 @@ class TunerControl(utils.Service):
 
     def change_playlist(self, index):
         print "Tuner: Changing playlist to "\
-            "%s" % self.radiostations[index]
+            "%s" % index
 
         # Change playlist
         self.playlist_index = index
