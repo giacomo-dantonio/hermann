@@ -6,6 +6,7 @@
     remote control with an mpd client).
 """
 
+import logging
 import os
 import subprocess
 
@@ -54,6 +55,7 @@ class MPCSource(utils.AudioSource):
 
     def cleanup(self):
         """ Stop playing on the mpd server """
+        logging.info("stopping mpc")
         subprocess.call(["mpc", "stop"])
 
     def play(self):
@@ -62,6 +64,8 @@ class MPCSource(utils.AudioSource):
             The method copy the current playlist on the "backup" playlist,
             then empties the current playlist and loads the new playlist.
         """
+        logging.info("playing playlist %s on mpc" % self.playlist)
+
         subprocess.call(["mpc", "rm", "backup"])
         subprocess.call(["mpc", "save", "backup"])
         subprocess.call(["mpc", "clear"])
@@ -109,8 +113,8 @@ class TunerControl(utils.Service):
         return max(min(result, N), 0)
 
     def change_playlist(self, index):
-        print "Tuner: Changing playlist to "\
-            "%s" % index
+        logging.info(
+            "Tuner: Changing playlist to %s" % index)
 
         # Change playlist
         self.playlist_index = index
@@ -150,7 +154,7 @@ class TunerControl(utils.Service):
                     self.change_playlist(_index)
 
     def stop(self):
-        print "Tuner: Shutting down"
+        logging.info("Tuner: Shutting down")
         if self.playlist:
             self.playlist.cleanup()
 

@@ -2,8 +2,10 @@
 This is the main module of Hermann's control code
 """
 
-import time
+import logging
 import subprocess
+import time
+import traceback
 
 from RPi import GPIO
 
@@ -17,11 +19,18 @@ class Hermann(object):
     def __init__(self):
         self.services = []
 
-    def _setup_pins(self):
-        GPIO.cleanup()
+    def cleanup(self):
+        logging.debug("GPIO cleanup")
+        try:
+            GPIO.cleanup()
+        except RuntimeWarning:
+            pass
 
+    def _setup_pins(self):
+        logging.debug("Setting up pins")
         # setup inputs
         for pin in options.in_pins.values():
+            GPIO.setmode(GPIO.BOARD)
             GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
         # setup outputs
@@ -32,13 +41,17 @@ class Hermann(object):
         """ Setup the application. This includes setting the GPIO pins
             and setting up the services.
         """
+        self.cleanup()
         self._setup_pins()
 
         for service in self.services:
-            print "Staring service %s" % service.name
+            logging.info("Staring service %s" % service.name)
             service.setup()
 
+        logging.debug("turning leds on")
         GPIO.output(options.out_pins["led"], 1)
+
+        logging.debug("turning amp on")
         GPIO.output(options.out_pins["amp_shutdown"], 1)
 
     def register_service(self, service):
@@ -51,10 +64,16 @@ class Hermann(object):
             setting the GPIO pins back to their defaults and disabling
             the audio output of mpd.
         """
+        logging.info("stopping the application")
         for service in self.services:
             service.stop()
         subprocess.call(["mpc", "disable", "1"])
-        GPIO.cleanup()
+
+        logging.debug("turning leds off")
+        GPIO.output(options.out_pins["led"], 0)
+
+        logging.debug("turning amp off")
+        GPIO.output(options.out_pins["amp_shutdown"], 0)
 
     def sleep(self):
         """ Put the application in stand by. This method will be called
@@ -63,7 +82,7 @@ class Hermann(object):
             It will stop the application and wait for the on/off switch to
             turn on.
         """
-        print "Hermann will sleep now"
+        logging.info("Hermann will sleep now")
         self.stop()
         GPIO.setup(options.in_pins["standby"], GPIO.IN,
                    pull_up_down=GPIO.PUD_DOWN)
@@ -72,7 +91,7 @@ class Hermann(object):
 
     def wakeup(self):
         """ Wake up from stand by mode. """
-        print "Hermann will wake up"
+        logging.info("Hermann will wake up")
         subprocess.call(["mpc", "enable", "1"])
         self.setup()
 
@@ -86,6 +105,7 @@ class Hermann(object):
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
     # Refer to pins using their board numbers (1-40)
     GPIO.setmode(GPIO.BOARD)
 
@@ -106,7 +126,7 @@ if __name__ == "__main__":
     except Exception as ex:
         # Something bad happened, print it out and safely terminate
         # the application
-        print ex
+        traceback.print_exc()
     except BaseException:
         # The application has been terminated (either by Ctrl-C or
         # by shutting down the system).
@@ -114,4 +134,4 @@ if __name__ == "__main__":
         pass
     finally:
         hermann.stop()
-        GPIO.cleanup()
+        hermann.cleanup()

@@ -25,7 +25,7 @@ class Options(object):  # FIXME: read from filesystem
         # the handle on the left side
         self.playlists_1 = [
             "ndrkultur",  # NDR Kultur
-            "bremenzwei",  Ã# Bremen 2
+            "bremenzwei",  # Bremen 2
             "dkultur",  # Deutschlandfunk Kultur
             "cosmo",  # Cosmo
             "bremenvier",  # Bremen 4
@@ -40,7 +40,7 @@ class Options(object):  # FIXME: read from filesystem
         # the values are constructor parameters
         self.services = {
             "tuner": [],
-            "volume": [],
+#            "Volume": [],
         }
 
         # Input pins, they will all be set up as input pins

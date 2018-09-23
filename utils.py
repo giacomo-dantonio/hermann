@@ -11,6 +11,8 @@ class MCP3008(object):
     def __init__(self, bus=0, client=0):
         self.spi = spidev.SpiDev()
         self.spi.open(bus, client)
+        self.spi.max_speed_hz = 500000
+
 
     def analog_read(self, channel):
         if (channel < 0 or channel > 7):
